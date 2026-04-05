@@ -26,7 +26,7 @@
 
 ## 소스 코드 분석
 
-- Claude Code 원본: `Claude Code source (local analysis)`
+- Claude Code 원본 소스 (로컬 분석용)
   - `utils/hooks.ts` — 훅 실행 엔진
   - `types/hooks.ts` — 결과 타입
   - `schemas/hooks.ts` — 설정 Zod 스키마
