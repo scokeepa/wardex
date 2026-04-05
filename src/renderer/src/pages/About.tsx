@@ -16,7 +16,7 @@ const TECH_STACK = [
 
 const VERSION = '1.0.0'
 const DEVELOPER = 'csm'
-const GITHUB_URL = 'https://github.com/csm/wardex'
+const GITHUB_URL = 'https://github.com/scokeepa/wardex'
 const LICENSE = 'ISC'
 
 export default function About(): React.JSX.Element {
