@@ -152,18 +152,37 @@ async function checkGit(): Promise<SystemHealth['git']> {
 
 async function checkSentry(): Promise<{ connected: boolean; unresolvedCount: number }> {
   const { base, token, org, project } = getSentryConfig()
-  if (!token || !org || !project) return { connected: false, unresolvedCount: 0 }
+  if (!token || !org || !project) {
+    return { connected: false, unresolvedCount: 0 }
+  }
+
+  // 1차: 토큰 유효성 + 연결 확인 (org/project 불필요)
+  try {
+    const authRes = await fetch(`${base}/api/0/`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(5000),
+    })
+    if (authRes.status === 401) return { connected: false, unresolvedCount: 0 }
+  } catch {
+    return { connected: false, unresolvedCount: 0 }
+  }
+
+  // 2차: 이슈 카운트 조회
   try {
     const res = await fetch(
       `${base}/api/0/projects/${org}/${project}/issues/?query=is:unresolved&per_page=1`,
       { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(5000) },
     )
-    if (!res.ok) return { connected: false, unresolvedCount: 0 }
+    if (!res.ok) {
+      // org/project가 틀려도 토큰이 유효하면 connected 처리
+      return { connected: true, unresolvedCount: 0 }
+    }
     const issues = (await res.json()) as unknown[]
     const total = res.headers.get('X-Hits') ?? res.headers.get('X-Total-Count')
     return { connected: true, unresolvedCount: total ? Number(total) : issues.length }
   } catch {
-    return { connected: false, unresolvedCount: 0 }
+    // 토큰은 유효하지만 네트워크 에러
+    return { connected: true, unresolvedCount: 0 }
   }
 }
 
@@ -351,8 +370,9 @@ export function registerIpcHandlers(): void {
         store.set('sentryDsn' as never, settings.sentryDsn as never)
       if (settings.sentryAuthToken !== undefined) {
         if (settings.sentryAuthToken) {
+          const { base } = getSentryConfig()
           try {
-            const res = await fetch('https://sentry.io/api/0/', {
+            const res = await fetch(`${base}/api/0/`, {
               headers: { Authorization: `Bearer ${settings.sentryAuthToken}` },
               signal: AbortSignal.timeout(5000),
             })
