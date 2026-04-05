@@ -1,34 +1,22 @@
-# Wardex
+<p align="center">
+  <img src="assets/images/wardex-banner.svg" alt="Wardex" width="100%">
+</p>
 
-```
-          [!]
-         /===\
-        | o_o |
-        |  ^  |
-     .--'-----'--.
-    |  +---------+  |
-    | | +-------+ | |    L1  Real-time
-    | | | +---+ | | |    L2  Git Gate
-    | | | | W | | | |    L3  CI/CD
-    | | | | X | | | |    L4  Production
-    | | | +---+ | | |
-    | | +-------+ | |
-    |  +---------+  |
-     '--.     .--'
-        |_____|
+<h1 align="center">Wardex</h1>
+<p align="center"><strong>4-Layer Error Automation System</strong></p>
+<p align="center">코드 작성부터 프로덕션까지 에러를 자동 감지 + 차단 + 추적하는 Electron 대시보드</p>
 
-  Four walls. Zero escapes.
-```
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="#"><img src="https://img.shields.io/badge/electron-41.x-47848F.svg" alt="Electron"></a>
+  <a href="#"><img src="https://img.shields.io/badge/react-19.x-61DAFB.svg" alt="React"></a>
+  <a href="#"><img src="https://img.shields.io/badge/typescript-strict-3178C6.svg" alt="TypeScript"></a>
+  <a href="#"><img src="https://img.shields.io/badge/tests-34%20passed-22c55e.svg" alt="Tests"></a>
+</p>
 
-**4-Layer Error Automation System** — 코드 작성부터 프로덕션까지 에러를 자동 감지 + 차단 + 추적하는 Electron 대시보드
+<p align="center"><em>"Four walls. Zero escapes."</em></p>
 
-```
-Write Code ──→ Commit ──→ Push ──→ Production
-    │              │          │          │
-   L1             L2         L3         L4
- Claude Code    Git Hooks   CI/CD     Sentry
-  (실시간)      (게이트)   (검증)    (추적)
-```
+---
 
 ---
 
