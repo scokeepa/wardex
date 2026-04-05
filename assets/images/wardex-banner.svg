@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="50%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="shield2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#16a34a"/>
+    </linearGradient>
+    <linearGradient id="shield3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <linearGradient id="shield4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="100%" style="stop-color:#dc2626"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bg)"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.05">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/>
+    </pattern>
+    <rect width="1200" height="400" fill="url(#grid)"/>
+  </g>
+
+  <!-- Concentric shields (mascot) -->
+  <g transform="translate(200, 200)" filter="url(#shadow)">
+    <!-- L4 outer shield (red) -->
+    <path d="M0,-120 L80,-90 L80,30 L0,90 L-80,30 L-80,-90 Z" fill="url(#shield4)" opacity="0.3" stroke="#ef4444" stroke-width="1.5"/>
+    <!-- L3 shield (yellow) -->
+    <path d="M0,-95 L62,-70 L62,20 L0,68 L-62,20 L-62,-70 Z" fill="url(#shield3)" opacity="0.35" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- L2 shield (green) -->
+    <path d="M0,-70 L45,-52 L45,12 L0,48 L-45,12 L-45,-52 Z" fill="url(#shield2)" opacity="0.4" stroke="#22c55e" stroke-width="1.5"/>
+    <!-- L1 inner shield (blue) -->
+    <path d="M0,-45 L28,-34 L28,5 L0,28 L-28,5 L-28,-34 Z" fill="url(#shield)" opacity="0.9" stroke="#60a5fa" stroke-width="2"/>
+
+    <!-- Eye / sentinel -->
+    <circle cx="0" cy="-15" r="8" fill="white" opacity="0.9"/>
+    <circle cx="0" cy="-15" r="4" fill="#0f172a"/>
+    <circle cx="2" cy="-17" r="1.5" fill="white"/>
+
+    <!-- Layer labels -->
+    <text x="95" y="-75" fill="#ef4444" font-family="monospace" font-size="11" font-weight="bold" opacity="0.8">L4</text>
+    <text x="75" y="-48" fill="#f59e0b" font-family="monospace" font-size="11" font-weight="bold" opacity="0.8">L3</text>
+    <text x="58" y="-22" fill="#22c55e" font-family="monospace" font-size="11" font-weight="bold" opacity="0.8">L2</text>
+    <text x="40" y="0" fill="#60a5fa" font-family="monospace" font-size="11" font-weight="bold" opacity="0.8">L1</text>
+  </g>
+
+  <!-- Title -->
+  <text x="400" y="155" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="white" filter="url(#glow)">Wardex</text>
+
+  <!-- Tagline -->
+  <text x="400" y="200" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#94a3b8">4-Layer Error Automation System</text>
+
+  <!-- Layer pipeline -->
+  <g transform="translate(400, 240)">
+    <!-- L1 -->
+    <rect x="0" y="0" width="130" height="32" rx="6" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-width="1"/>
+    <text x="12" y="21" font-family="monospace" font-size="13" fill="#60a5fa">L1 Coding</text>
+    <!-- Arrow -->
+    <text x="140" y="21" font-family="monospace" font-size="16" fill="#475569">--></text>
+    <!-- L2 -->
+    <rect x="175" y="0" width="130" height="32" rx="6" fill="#22c55e" opacity="0.2" stroke="#22c55e" stroke-width="1"/>
+    <text x="187" y="21" font-family="monospace" font-size="13" fill="#4ade80">L2 Git Gate</text>
+    <!-- Arrow -->
+    <text x="315" y="21" font-family="monospace" font-size="16" fill="#475569">--></text>
+    <!-- L3 -->
+    <rect x="350" y="0" width="130" height="32" rx="6" fill="#f59e0b" opacity="0.2" stroke="#f59e0b" stroke-width="1"/>
+    <text x="362" y="21" font-family="monospace" font-size="13" fill="#fbbf24">L3 CI/CD</text>
+    <!-- Arrow -->
+    <text x="490" y="21" font-family="monospace" font-size="16" fill="#475569">--></text>
+    <!-- L4 -->
+    <rect x="525" y="0" width="130" height="32" rx="6" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="1"/>
+    <text x="537" y="21" font-family="monospace" font-size="13" fill="#f87171">L4 Sentry</text>
+  </g>
+
+  <!-- Subtitle -->
+  <text x="400" y="315" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#64748b" font-style="italic">"Four walls. Zero escapes."</text>
+
+  <!-- Tech badges -->
+  <g transform="translate(400, 340)">
+    <text font-family="monospace" font-size="12" fill="#475569">
+      <tspan>Electron</tspan>
+      <tspan dx="8" fill="#334155">|</tspan>
+      <tspan dx="8">React 19</tspan>
+      <tspan dx="8" fill="#334155">|</tspan>
+      <tspan dx="8">TypeScript</tspan>
+      <tspan dx="8" fill="#334155">|</tspan>
+      <tspan dx="8">Tailwind v4</tspan>
+      <tspan dx="8" fill="#334155">|</tspan>
+      <tspan dx="8">Sentry</tspan>
+    </text>
+  </g>
+</svg>
