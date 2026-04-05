@@ -8,6 +8,7 @@ export const ko = {
     logs: '로그',
     timeline: '타임라인',
     sentry: 'Sentry',
+    patterns: '패턴',
     settings: '설정',
   },
 
@@ -105,6 +106,30 @@ export const ko = {
     github: 'GitHub',
     license: '라이선스',
     techStack: '기술 스택',
+  },
+
+  // Patterns
+  patterns: {
+    title: '패턴',
+    errorPatterns: '에러 패턴',
+    hotFiles: '핫 파일',
+    suggestions: '제안',
+    file: '파일',
+    type: '유형',
+    count: '횟수',
+    trend: '트렌드',
+    lastSeen: '최근 발생',
+    noPatterns: '아직 감지된 에러 패턴이 없습니다.',
+    noHotFiles: '핫 파일이 없습니다.',
+    noSuggestions: '제안 사항이 없습니다.',
+    applyRule: 'CLAUDE.md에 적용',
+    dismiss: '무시',
+    applied: '적용됨',
+    errors: '에러',
+    blocks: '차단',
+    events: '이벤트',
+    patternsDetected: '개 에러 패턴 감지',
+    suggestionsAvailable: '개 제안 대기',
   },
 
   // Sidebar (about)

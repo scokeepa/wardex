@@ -8,6 +8,7 @@ export const en = {
     logs: 'Logs',
     timeline: 'Timeline',
     sentry: 'Sentry',
+    patterns: 'Patterns',
     settings: 'Settings',
   },
 
@@ -105,6 +106,30 @@ export const en = {
     github: 'GitHub',
     license: 'License',
     techStack: 'Tech Stack',
+  },
+
+  // Patterns
+  patterns: {
+    title: 'Patterns',
+    errorPatterns: 'Error Patterns',
+    hotFiles: 'Hot Files',
+    suggestions: 'Suggestions',
+    file: 'File',
+    type: 'Type',
+    count: 'Count',
+    trend: 'Trend',
+    lastSeen: 'Last Seen',
+    noPatterns: 'No error patterns detected yet.',
+    noHotFiles: 'No hot files detected.',
+    noSuggestions: 'No suggestions available.',
+    applyRule: 'Apply to CLAUDE.md',
+    dismiss: 'Dismiss',
+    applied: 'Applied',
+    errors: 'errors',
+    blocks: 'blocks',
+    events: 'events',
+    patternsDetected: 'error patterns detected',
+    suggestionsAvailable: 'suggestions available',
   },
 
   // Sidebar (about)

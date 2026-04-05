@@ -9,6 +9,7 @@ export default function Sidebar(): React.JSX.Element {
     { to: '/logs', label: t.nav.logs },
     { to: '/timeline', label: t.nav.timeline },
     { to: '/sentry', label: t.nav.sentry },
+    { to: '/patterns', label: t.nav.patterns },
     { to: '/settings', label: t.nav.settings },
     { to: '/about', label: t.nav_about },
   ]

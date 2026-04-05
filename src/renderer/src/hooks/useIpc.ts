@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
-import type { LogEntry, HookEvent, SystemHealth } from '../../../shared/types'
+import type { LogEntry, HookEvent, SystemHealth, PatternAnalysis } from '../../../shared/types'
 
 export function useLogStream(onMessage: (entry: LogEntry) => void): void {
   const ref = useRef(onMessage)
@@ -66,4 +66,16 @@ export function useSystemHealth(): { health: SystemHealth | null; refresh: () =>
   }, [doFetch])
 
   return { health, refresh: doFetch }
+}
+
+export function usePatternStream(onUpdate: (analysis: PatternAnalysis) => void): void {
+  const ref = useRef(onUpdate)
+  ref.current = onUpdate
+
+  useEffect(() => {
+    if (!window.wardex) return () => {}
+    return window.wardex.onPatternUpdate((analysis) => {
+      ref.current(analysis)
+    })
+  }, [])
 }

@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-base-to-string */
 import { ipcMain, BrowserWindow, safeStorage } from 'electron'
-import { exec } from 'child_process'
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { watch } from 'chokidar'
 import Store from 'electron-store'
-import type {
-  SystemHealth,
-  HookEvent,
-  ActionType,
-  ActionResult,
-  AppSettings,
-  LogEntry,
-} from '../shared/types'
+import { execAsync, parseHookLogLines } from './utils'
+import { loadAndAnalyze, applySuggestionToClaudeMd } from './pattern-analyzer'
+import type { SystemHealth, ActionType, ActionResult, AppSettings, LogEntry } from '../shared/types'
 
 const PROJECT_DIR = process.cwd()
 console.log('[wardex] PROJECT_DIR:', PROJECT_DIR)
@@ -79,25 +73,13 @@ function broadcast(channel: string, data: unknown): void {
   }
 }
 
-function execAsync(cmd: string, timeoutMs = 60_000): Promise<{ stdout: string; stderr: string }> {
-  return new Promise((resolve, reject) => {
-    exec(
-      cmd,
-      { cwd: PROJECT_DIR, timeout: timeoutMs, maxBuffer: 5 * 1024 * 1024 },
-      (err, stdout, stderr) => {
-        if (err?.killed) {
-          reject(new Error(`Timed out after ${String(timeoutMs / 1000)}s`))
-        } else {
-          resolve({ stdout, stderr })
-        }
-      },
-    )
-  })
+function execLocal(cmd: string, timeoutMs = 60_000): Promise<{ stdout: string; stderr: string }> {
+  return execAsync(cmd, PROJECT_DIR, timeoutMs)
 }
 
 async function checkTypescript(): Promise<SystemHealth['typescript']> {
   try {
-    const { stdout } = await execAsync(`${BIN}/tsc --noEmit 2>&1`)
+    const { stdout } = await execLocal(`${BIN}/tsc --noEmit 2>&1`)
     const errors = (stdout.match(/error TS/g) ?? []).length
     return { errors, checked: true }
   } catch {
@@ -107,7 +89,7 @@ async function checkTypescript(): Promise<SystemHealth['typescript']> {
 
 async function checkEslint(): Promise<SystemHealth['eslint']> {
   try {
-    const { stdout } = await execAsync(`${BIN}/eslint src/ --format json 2>/dev/null`)
+    const { stdout } = await execLocal(`${BIN}/eslint src/ --format json 2>/dev/null`)
     const results = JSON.parse(stdout) as Array<{ errorCount: number; warningCount: number }>
     const errors = results.reduce((sum, r) => sum + r.errorCount, 0)
     const warnings = results.reduce((sum, r) => sum + r.warningCount, 0)
@@ -120,7 +102,7 @@ async function checkEslint(): Promise<SystemHealth['eslint']> {
 async function checkTests(): Promise<SystemHealth['tests']> {
   try {
     const outFile = '/tmp/wardex-test-result.json'
-    await execAsync(`${BIN}/vitest run --reporter=json --outputFile=${outFile} 2>/dev/null`)
+    await execLocal(`${BIN}/vitest run --reporter=json --outputFile=${outFile} 2>/dev/null`)
     const raw = await readFile(outFile, 'utf-8')
     const data = JSON.parse(raw) as {
       numPassedTests: number
@@ -141,8 +123,8 @@ async function checkTests(): Promise<SystemHealth['tests']> {
 async function checkGit(): Promise<SystemHealth['git']> {
   try {
     const [status, branch] = await Promise.all([
-      execAsync('git status --porcelain'),
-      execAsync('git branch --show-current'),
+      execLocal('git status --porcelain'),
+      execLocal('git branch --show-current'),
     ])
     return { branch: branch.stdout.trim() || 'unknown', clean: status.stdout.trim() === '' }
   } catch {
@@ -259,19 +241,7 @@ function formatStacktrace(event: Record<string, unknown>): string {
   return ''
 }
 
-function parseHookLogLines(content: string): HookEvent[] {
-  return content
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => {
-      try {
-        return JSON.parse(line) as HookEvent
-      } catch {
-        return null
-      }
-    })
-    .filter((e): e is HookEvent => e !== null)
-}
+// parseHookLogLines imported from ./utils
 
 async function getFullHealth(): Promise<SystemHealth> {
   console.log('[wardex] health:check running...')
@@ -318,7 +288,7 @@ export function registerIpcHandlers(): void {
         format: `${BIN}/prettier --check src/`,
       }
       try {
-        const { stdout, stderr } = await execAsync(commands[action])
+        const { stdout, stderr } = await execLocal(commands[action])
         const output = (stdout + stderr).slice(0, 5000)
         runningAction = null
         void getFullHealth().then((h) => {
@@ -498,6 +468,36 @@ export function registerIpcHandlers(): void {
     },
   )
 
+  // --- Pattern Analysis ---
+
+  ipcMain.handle('patterns:analyze', async (_event, options: { days?: number }) => {
+    return loadAndAnalyze(HOOK_LOG, PROJECT_DIR, options)
+  })
+
+  ipcMain.handle(
+    'patterns:apply-suggestion',
+    async (_event, { suggestionId, rule }: { suggestionId: string; rule: string }) => {
+      const result = await applySuggestionToClaudeMd(PROJECT_DIR, rule)
+      if (result.ok) {
+        // Store applied state
+        const key = `_appliedSuggestions` as never
+        const existing = (store.get(key) as string[]) ?? []
+        store.set(key, [...existing, suggestionId] as never)
+      }
+      return result
+    },
+  )
+
+  ipcMain.handle(
+    'patterns:dismiss-suggestion',
+    (_event, { suggestionId }: { suggestionId: string }) => {
+      const key = `_dismissedSuggestions` as never
+      const existing = (store.get(key) as string[]) ?? []
+      store.set(key, [...existing, suggestionId] as never)
+      return { ok: true }
+    },
+  )
+
   console.log('[wardex] IPC handlers registered')
 }
 
@@ -506,6 +506,8 @@ export function startHookLogWatcher(): void {
     console.log('[wardex] hook-log.jsonl not found, skipping watcher')
     return
   }
+
+  let patternDebounce: ReturnType<typeof setTimeout> | null = null
 
   console.log('[wardex] Starting hook-log watcher:', HOOK_LOG)
   const watcher = watch(HOOK_LOG, { persistent: true, ignoreInitial: true })
@@ -534,6 +536,14 @@ export function startHookLogWatcher(): void {
           }
           broadcast('log:push', logEntry)
         }
+
+        // Debounced pattern analysis broadcast
+        if (patternDebounce) clearTimeout(patternDebounce)
+        patternDebounce = setTimeout(() => {
+          void loadAndAnalyze(HOOK_LOG, PROJECT_DIR).then((analysis) => {
+            broadcast('pattern:update', analysis)
+          })
+        }, 2000)
       } catch {
         /* ignore */
       }

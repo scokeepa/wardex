@@ -60,6 +60,17 @@ const mockWardex: WardexAPI = {
   onLogMessage: noop,
   onHookEvent: noop,
   onHealthUpdate: noop,
+  getPatternAnalysis: () =>
+    Promise.resolve({
+      patterns: [],
+      hotFiles: [],
+      suggestions: [],
+      analyzedEventCount: 0,
+      timeWindow: { from: '', to: '' },
+    }),
+  applySuggestion: () => Promise.resolve({ ok: true }),
+  dismissSuggestion: () => Promise.resolve({ ok: true }),
+  onPatternUpdate: noop,
 }
 
 Object.defineProperty(window, 'wardex', { value: mockWardex, writable: true })

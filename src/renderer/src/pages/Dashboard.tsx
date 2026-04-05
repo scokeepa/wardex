@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import type { ActionType, ActionResult } from '../../../shared/types'
+import { useNavigate } from 'react-router-dom'
+import type { ActionType, ActionResult, PatternAnalysis } from '../../../shared/types'
 import { useSystemHealth } from '../hooks/useIpc'
 import { useI18n } from '../i18n'
 import StatusCard from '../components/StatusCard'
@@ -10,7 +11,17 @@ export default function Dashboard(): React.JSX.Element {
   const { health, refresh: loadHealth } = useSystemHealth()
   const [runningAction, setRunningAction] = useState<ActionType | null>(null)
   const [actionResult, setActionResult] = useState<ActionResult | null>(null)
+  const [patterns, setPatterns] = useState<PatternAnalysis | null>(null)
+  const navigate = useNavigate()
   const { t } = useI18n()
+
+  useEffect(() => {
+    if (!window.wardex) return
+    window.wardex
+      .getPatternAnalysis()
+      .then(setPatterns)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!window.wardex) return () => {}
@@ -123,6 +134,40 @@ export default function Dashboard(): React.JSX.Element {
           )}
         </div>
       </section>
+
+      {patterns && (patterns.patterns.length > 0 || patterns.suggestions.length > 0) ? (
+        <section>
+          <h2 className="text-sm font-semibold text-neutral-500 uppercase mb-3">Insights</h2>
+          <div className="flex flex-wrap gap-3 items-center">
+            {patterns.patterns.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  void navigate('/patterns')
+                }}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {String(patterns.patterns.length)} {t.patterns.patternsDetected}
+              </button>
+            ) : null}
+            {patterns.hotFiles.length > 0 ? (
+              <span className="text-xs text-neutral-500">
+                Hot:{' '}
+                {patterns.hotFiles
+                  .slice(0, 3)
+                  .map((f) => f.file.split('/').pop())
+                  .join(', ')}
+              </span>
+            ) : null}
+            {patterns.suggestions.filter((s) => !s.applied).length > 0 ? (
+              <span className="rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 text-xs">
+                {String(patterns.suggestions.filter((s) => !s.applied).length)}{' '}
+                {t.patterns.suggestionsAvailable}
+              </span>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       <section>
         <h2 className="text-sm font-semibold text-neutral-500 uppercase mb-3">{d.quickActions}</h2>
