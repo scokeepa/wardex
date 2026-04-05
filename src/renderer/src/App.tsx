@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import LogViewer from './pages/LogViewer'
 import SentryViewer from './pages/SentryViewer'
 import Timeline from './pages/Timeline'
+import Patterns from './pages/Patterns'
 import Settings from './pages/Settings'
 import About from './pages/About'
 
@@ -17,6 +18,7 @@ export default function App(): React.JSX.Element {
           <Route path="/logs" element={<LogViewer />} />
           <Route path="/sentry" element={<SentryViewer />} />
           <Route path="/timeline" element={<Timeline />} />
+          <Route path="/patterns" element={<Patterns />} />
           <Route path="/about" element={<About />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

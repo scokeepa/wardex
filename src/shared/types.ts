@@ -79,6 +79,46 @@ export interface AppSettings {
   darkMode: boolean
 }
 
+// --- 패턴 분석 ---
+export interface ErrorPattern {
+  id: string
+  file: string
+  errorType: string
+  count: number
+  firstSeen: string
+  lastSeen: string
+  messages: string[]
+  ruleIds: string[]
+  trend: 'increasing' | 'stable' | 'decreasing'
+}
+
+export interface HotFile {
+  file: string
+  errorCount: number
+  blockCount: number
+  totalEvents: number
+  lastError: string
+}
+
+export interface PatternSuggestion {
+  id: string
+  patternId: string
+  type: 'claude-md-rule' | 'hook-config' | 'eslint-config'
+  title: string
+  description: string
+  rule: string
+  applied: boolean
+  dismissedAt?: string
+}
+
+export interface PatternAnalysis {
+  patterns: ErrorPattern[]
+  hotFiles: HotFile[]
+  suggestions: PatternSuggestion[]
+  analyzedEventCount: number
+  timeWindow: { from: string; to: string }
+}
+
 // --- Preload API ---
 export interface WardexAPI {
   getSentryIssues(query?: string): Promise<SentryIssue[]>
@@ -92,6 +132,10 @@ export interface WardexAPI {
   onLogMessage(callback: (entry: LogEntry) => void): () => void
   onHookEvent(callback: (event: HookEvent) => void): () => void
   onHealthUpdate(callback: (health: Partial<SystemHealth>) => void): () => void
+  getPatternAnalysis(options?: { days?: number }): Promise<PatternAnalysis>
+  applySuggestion(suggestionId: string, rule: string): Promise<{ ok: boolean; error?: string }>
+  dismissSuggestion(suggestionId: string): Promise<{ ok: boolean }>
+  onPatternUpdate(callback: (analysis: PatternAnalysis) => void): () => void
 }
 
 // --- Window 타입 확장 ---

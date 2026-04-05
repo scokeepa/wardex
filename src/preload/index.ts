@@ -38,6 +38,20 @@ const wardexAPI = {
       ipcRenderer.removeAllListeners('health:update')
     }
   },
+  getPatternAnalysis: (options?: { days?: number }) =>
+    ipcRenderer.invoke('patterns:analyze', options ?? {}),
+  applySuggestion: (suggestionId: string, rule: string) =>
+    ipcRenderer.invoke('patterns:apply-suggestion', { suggestionId, rule }),
+  dismissSuggestion: (suggestionId: string) =>
+    ipcRenderer.invoke('patterns:dismiss-suggestion', { suggestionId }),
+  onPatternUpdate: (callback: (...args: unknown[]) => void) => {
+    ipcRenderer.on('pattern:update', (_event, analysis) => {
+      callback(analysis)
+    })
+    return () => {
+      ipcRenderer.removeAllListeners('pattern:update')
+    }
+  },
 }
 
 if (process.contextIsolated) {
