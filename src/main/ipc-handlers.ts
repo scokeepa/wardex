@@ -471,7 +471,13 @@ export function registerIpcHandlers(): void {
   // --- Pattern Analysis ---
 
   ipcMain.handle('patterns:analyze', async (_event, options: { days?: number }) => {
-    return loadAndAnalyze(HOOK_LOG, PROJECT_DIR, options)
+    const analysis = await loadAndAnalyze(HOOK_LOG, PROJECT_DIR, options)
+    const applied = (store.get('_appliedSuggestions' as never) as string[]) ?? []
+    const dismissed = (store.get('_dismissedSuggestions' as never) as string[]) ?? []
+    analysis.suggestions = analysis.suggestions
+      .filter((s) => !dismissed.includes(s.id))
+      .map((s) => ({ ...s, applied: applied.includes(s.id) }))
+    return analysis
   })
 
   ipcMain.handle(
