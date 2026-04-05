@@ -16,7 +16,7 @@ function parseSentryApiBase(dsn: string): string {
 
 describe('parseSentryApiBase', () => {
   it('parses US region DSN', () => {
-    const dsn = 'https://key@o4511150835236864.ingest.us.sentry.io/4511150841397248'
+    const dsn = 'https://key@o1234567890.ingest.us.sentry.io/9876543210'
     expect(parseSentryApiBase(dsn)).toBe('https://us.sentry.io')
   })
 
