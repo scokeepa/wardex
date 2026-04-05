@@ -1,7 +1,7 @@
 # Claude Code 소스 코드 감사 결과
 
 > 날짜: 2026-04-03
-> 분석 대상: `/Users/csm/claude-code/source/src/`
+> 분석 대상: Claude Code 소스 코드 (로컬 분석)
 > 목적: Wardex 훅 설정의 허점과 개선점 도출
 
 ## 분석한 핵심 파일
