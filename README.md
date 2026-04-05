@@ -128,31 +128,35 @@ PR 생성 / main 푸시
 
 ---
 
+## 스크린샷
+
+### Dashboard — 4-Layer 상태 + 시스템 헬스 + 퀵 액션
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Logs — 실시간 로그 스트림 + 필터
+
+![Logs](docs/screenshots/logs.png)
+
+### Timeline — Hook 이벤트 타임라인
+
+![Timeline](docs/screenshots/timeline.png)
+
+### Sentry — 이슈 뷰어 + 스택 트레이스
+
+![Sentry](docs/screenshots/sentry.png)
+
+### About — 프로젝트 정보 + 기술 스택
+
+![About](docs/screenshots/about.png)
+
+---
+
 ## 대시보드 페이지
 
 ### Dashboard — 전체 현황
 
 4-Layer 상태 카드 + 시스템 헬스(tsc/eslint/vitest/git 병렬 실행) + 원클릭 퀵 액션
-
-```
-┌──────────────────────────────────────────────────┐
-│  Layers                                          │
-│  ┌──────────┐ ┌──────────┐ ┌──────┐ ┌────────┐  │
-│  │L1 Claude │ │L2 Git    │ │L3 CI │ │L4 Sentry│ │
-│  │ Active   │ │ Active   │ │ OK   │ │Connected│ │
-│  │ 5 hooks  │ │ pre-c/p  │ │ ci.yml│ │ 3 open │ │
-│  └──────────┘ └──────────┘ └──────┘ └────────┘  │
-│                                                  │
-│  System Health                                   │
-│  ┌──────────┐ ┌──────────┐ ┌──────┐ ┌────────┐  │
-│  │TypeScript│ │ ESLint   │ │Tests │ │  Git   │  │
-│  │ 0 errors │ │ 0 err    │ │34/34 │ │main ✓  │  │
-│  └──────────┘ └──────────┘ └──────┘ └────────┘  │
-│                                                  │
-│  Quick Actions                                   │
-│  [Type Check] [Lint Fix] [Run Tests] [Format]    │
-└──────────────────────────────────────────────────┘
-```
 
 ### Logs — 실시간 로그 스트림
 
