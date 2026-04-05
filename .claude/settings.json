@@ -1,0 +1,86 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/error-check.sh",
+            "statusMessage": "Checking lint errors..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write 2>/dev/null",
+            "async": true,
+            "statusMessage": "Formatting with Prettier..."
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/log-event.sh failure",
+            "async": true,
+            "statusMessage": "Logging tool failure..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh",
+            "statusMessage": "Checking protected files..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(rm *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/danger-guard.sh",
+            "statusMessage": "Checking dangerous command..."
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/danger-guard.sh",
+            "statusMessage": "Checking git push target..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Check the input JSON: $ARGUMENTS. If the field 'stop_hook_active' is true, respond immediately with {\"ok\": true} to prevent infinite loops. Otherwise, run 'npx tsc --noEmit' and 'npx vitest run' in the project directory. If either command fails, respond with {\"ok\": false, \"reason\": \"<describe what failed>\"}. If both pass, respond with {\"ok\": true}.",
+            "timeout": 120,
+            "statusMessage": "Running final verification (tsc + tests)..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Project: Wardex (React+TS+Electron). Rules: strict TypeScript, run tsc --noEmit before completing, use ESLint flat config, Prettier for formatting. 4-Layer error automation is active.'"
+          }
+        ]
+      }
+    ]
+  }
+}
