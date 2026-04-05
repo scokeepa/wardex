@@ -1,5 +1,25 @@
 # Wardex
 
+```
+          [!]
+         /===\
+        | o_o |
+        |  ^  |
+     .--'-----'--.
+    |  +---------+  |
+    | | +-------+ | |    L1  Real-time
+    | | | +---+ | | |    L2  Git Gate
+    | | | | W | | | |    L3  CI/CD
+    | | | | X | | | |    L4  Production
+    | | | +---+ | | |
+    | | +-------+ | |
+    |  +---------+  |
+     '--.     .--'
+        |_____|
+
+  Four walls. Zero escapes.
+```
+
 **4-Layer Error Automation System** — 코드 작성부터 프로덕션까지 에러를 자동 감지 + 차단 + 추적하는 Electron 대시보드
 
 ```
